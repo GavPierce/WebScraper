@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+	<title>Solar Search</title>
+    <style>
+		body {
+			margin: 0 !important;
+			background-color: #06be7b3a;
+		}
+		.greyed {
+			background-color: #05b07158;
+		}
+		.title {
+			text-align: center;
+			color: white;
+			font-size: 50px;
+			font-family: 'Russo One', sans-serifs;
+		}
+		.search-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: relative;	
+			background: rgb(250,167,10);
+background: linear-gradient(337deg, rgba(250,167,10,1) 0%, rgba(228,255,112,1) 80%);
+			height: 14em;
+		}
+		input[type=text] {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			background-color: #ebe86c;
+			height: 3em;
+			width: 300px;
+			box-sizing: border-box;
+			border: 2px solid white;
+			border-radius: 4px;
+			font-size: 25px;
+			background-image: url('https://icons8.com/icon/6703/lightning-bolt');
+			background-position: 10px 10px; 
+			background-repeat: no-repeat;
+			padding: 12px 20px 12px 40px;
+			transition: width 0.4s ease-in-out;
+			color: black;
+		}
+
+		input[type=text]:focus {
+		width: 100%;
+		}
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+		tr:hover {background-color: #ebe86c;}
+		tr {
+			height: 40px;
+		}
+        th {
+			padding-top: 12px;
+			padding-bottom: 12px;
+			background-color: #04AA6D;
+			color: white;
+        }
+		th tr {
+			border: 1px solid #ddd;
+			text-align: left;
+		}
+		tr {
+			background-color: #06be7b3a
+		}
+		td {
+			padding: 10px;;
+		}
+    </style>
+</head>
+<body>
+	<div class="search-container">
+		<span class="title"> SOLAR SEARCH</span>
+		<input type="text" id="search-box" placeholder="Search Here Daddio">
+	</div>
+    <table id="object-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Applied Date</th>
+                <th>Requested Date</th>
+                <th>Inspected Date</th>
+                <th>Owner</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>County</th>
+                <th>Status</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const searchBox = document.getElementById('search-box');
+		const resultDiv = document.getElementById('result');
+
+		searchBox.addEventListener('input', fetchResults);
+
+		function fetchResults() {
+			const searchTerm = searchBox.value;
+			
+			fetch(`search?${searchTerm}`)
+				.then(response => response.json())
+				.then(data => {
+					displayResults(data);
+				})
+				.catch(error => console.log(error));
+		}
+
+		function displayResults(data) {
+			
+			const tableBody = document.querySelector('#object-table tbody');
+			tableBody.innerHTML = '';
+
+			data.forEach((item,index) => {
+
+				const row = document.createElement('tr');
+				if (index % 2 !== 0) {
+					row.classList.add('greyed');
+				}
+				const idCell = document.createElement('td');
+				idCell.textContent = item.item.Id;
+				row.appendChild(idCell);
+
+				const appliedDateCell = document.createElement('td');
+				appliedDateCell.textContent = item.item.AppliedDate;
+				row.appendChild(appliedDateCell);
+
+				const requestedDateCell = document.createElement('td');
+				requestedDateCell.textContent = item.item.RequestedDate;
+				row.appendChild(requestedDateCell);
+
+				const inspectedDateCell = document.createElement('td');
+				inspectedDateCell.textContent = item.item.InspectedDate;
+				row.appendChild(inspectedDateCell);
+
+				const ownerCell = document.createElement('td');
+				ownerCell.textContent = item.item.Owner;
+				row.appendChild(ownerCell);
+
+				const addressCell = document.createElement('td');
+				addressCell.textContent = item.item.Address;
+				row.appendChild(addressCell);
+
+				const cityCell = document.createElement('td');
+				cityCell.textContent = item.item.City;
+				row.appendChild(cityCell);
+
+				const countyCell = document.createElement('td');
+				countyCell.textContent = item.item.County;
+				row.appendChild(countyCell);
+
+				const statusCell = document.createElement('td');
+				statusCell.textContent = item.item.Status;
+				row.appendChild(statusCell);
+
+				const descriptionCell = document.createElement('td');
+				descriptionCell.textContent = item.item.Description;
+				row.appendChild(descriptionCell);
+				tableBody.appendChild(row);
+			});
+		}
+    </script>
+</body>
+</html>
