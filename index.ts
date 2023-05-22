@@ -8,8 +8,10 @@ cron.schedule(`0 1 * * *`, async () => {
   console.log('Running WebScrape');
   WebScrape();
 });
+const port = parseInt(process.env.PORT || "8080");
+
 const server = Bun.serve({
-  port: 8080,
+  port: port,
   fetch(req,res) {
     const url = new URL(req.url);
     if (url.pathname === "/") return new Response(Bun.file('index.html'));
