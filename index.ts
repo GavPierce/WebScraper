@@ -9,7 +9,7 @@ cron.schedule(`0 1 * * *`, async () => {
   WebScrape();
 });
 const server = Bun.serve({
-  port: 3000,
+  port: 8080,
   fetch(req,res) {
     const url = new URL(req.url);
     if (url.pathname === "/") return new Response(Bun.file('index.html'));
@@ -18,11 +18,11 @@ const server = Bun.serve({
 
       let query = url.searchParams.toString().replace("=",'');
       console.log(query)
-      let filteredResult = fuzzySearch(query,result,1);
+      let filteredResult = fuzzySearch(query,result);
       return new Response(JSON.stringify(filteredResult));
     };
     return new Response(`404!`); 
    },
 });
 
-console.log('Running on port 3000')
+console.log('Running on port 8080')
