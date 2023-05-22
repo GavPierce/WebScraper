@@ -7,6 +7,21 @@
 	<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
 	<title>Solar Search</title>
     <style>
+		@-webkit-keyframes moving-gradient {
+			0% { background-position: -250px 0; }
+			100% { background-position: 250px 0; }
+		}
+		.loading {
+			background: rgb(7,173,112);
+background: linear-gradient(315deg, rgba(7,173,112,1) 18%, rgba(5,176,113,0.6896008403361344) 49%, rgba(7,173,112,1) 83%);
+
+			background-size: 500px 100px;
+          animation-name: moving-gradient;
+          animation-duration: 1s;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;
+          animation-fill-mode: forwards;
+		}
 		body {
 			margin: 0 !important;
 			background-color: #06be7b3a;
@@ -113,13 +128,32 @@ background: linear-gradient(337deg, rgba(250,167,10,1) 0%, rgba(228,255,112,1) 8
 
 		function fetchResults() {
 			const searchTerm = searchBox.value;
-			
+			displayLoader();
 			fetch(`search?${searchTerm}`)
 				.then(response => response.json())
 				.then(data => {
 					displayResults(data);
 				})
 				.catch(error => console.log(error));
+		}
+		function displayLoader() {
+			const tableBody = document.querySelector('#object-table tbody');
+			tableBody.innerHTML = '';
+
+			for (let x = 0; x < 40; x++) {
+				const row = document.createElement('tr');
+				if (x % 2 !== 0) {
+					row.classList.add('loading');
+				}
+
+				for (let y =0; y < 10; y++) {
+					const column = document.createElement('td');
+					column.textContent = '';
+					row.appendChild(column);
+				}
+				tableBody.appendChild(row);
+
+			}
 		}
 		function displayResults(data) {
 			
