@@ -8,5 +8,5 @@ const year = today.getFullYear();
 
 const encodedDate = `${month}%2F${day}%2F${year}`;
 
- return `__EVENTTARGET=grdPermits%24_ctl1%24_ctl${pageNumber}&__EVENTARGUMENT=&__LASTFOCUS=&__VIEWSTATE=${VIEWSTATE}&__VIEWSTATEGENERATOR=D19B23D8&__EVENTVALIDATION=${EVENTVALIDATION}&rdoPermitType=0&tbxPermitNumber=&tbxBegDate=4%2F19%2F2022&tbxEndDate=5%2F19%2F2023&tbxContractorId=&tbxBusinessName=&tbxLastName=&tbxFirstName=&tbxUBI=&tbxSiteOwner=&tbxSiteLastName=&tbxSiteFirstName=&tbxSiteAddr1=&tbxSiteCity=&lstSiteCounty=19&URL=https%3A%2F%2Flni.wa.gov%2Flicensing-permits%2Felectrical%2Felectrical-permits-fees-and-inspections%2Fpurchase-permits-request-inspections`
+ return `__EVENTTARGET=grdPermits%24_ctl1%24_ctl${pageNumber}&__EVENTARGUMENT=&__LASTFOCUS=&__VIEWSTATE=${VIEWSTATE}&__VIEWSTATEGENERATOR=D19B23D8&__EVENTVALIDATION=${EVENTVALIDATION}&rdoPermitType=0&tbxPermitNumber=&tbxBegDate=4%2F19%2F2022&tbxEndDate=${encodedDate}&tbxContractorId=&tbxBusinessName=&tbxLastName=&tbxFirstName=&tbxUBI=&tbxSiteOwner=&tbxSiteLastName=&tbxSiteFirstName=&tbxSiteAddr1=&tbxSiteCity=&lstSiteCounty=19&URL=https%3A%2F%2Flni.wa.gov%2Flicensing-permits%2Felectrical%2Felectrical-permits-fees-and-inspections%2Fpurchase-permits-request-inspections`
 }
