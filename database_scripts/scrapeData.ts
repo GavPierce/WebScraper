@@ -193,6 +193,7 @@ for(let x = 0; x < numberOfPages; x++) {
     
     
     try {
+        // @ts-expect-error Type issue with Headers in Fetch
       const response = await fetch(url, data);
       const result = (await response.text()) as any;
 
