@@ -4,7 +4,7 @@ import { fuzzySearch } from "./Utils/fuzzySearch";
 import { dailyScrape } from "./database_scripts/dailyScrape";
 import cron from 'node-cron';
 
-cron.schedule(`0 1 * * *`, async () => {
+cron.schedule(`0 14 * * *`, async () => {
   console.log('Running Daily Scrape');
   dailyScrape();
 });
