@@ -1,13 +1,14 @@
 
 import result from "./database_scripts/getAllFromDB";
 import { fuzzySearch } from "./Utils/fuzzySearch";
-import { WebScrape } from "./database_scripts/scrapeData";
+// import { WebScrape } from "./database_scripts/scrapeData";
 import cron from 'node-cron';
 
-cron.schedule(`0 1 * * *`, async () => {
-  console.log('Running WebScrape');
-  WebScrape();
-});
+// console.log(new Date());
+// cron.schedule(`0 1 * * *`, async () => {
+//   console.log('Running WebScrape');
+//   WebScrape();
+// });
 const port = parseInt(process.env.PORT || "8080");
 
 const server = Bun.serve({

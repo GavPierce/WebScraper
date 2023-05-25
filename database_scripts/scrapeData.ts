@@ -1,9 +1,20 @@
 import { formData } from "../viewState";
 import { Database } from "bun:sqlite";
+import { viewData } from "./types";
 
+const url: string = 'https://secure.lni.wa.gov/epispub/frmPermitSearchMain.aspx';
 interface RowObject {
   [key: string]: string;
 }
+/**
+ * 
+ * Scrape Data from WA Permits site
+ * 
+ * Order of Operations:
+ *    1) Make request for for site and get initial viewState. (Site is asp.net)
+ *    2) Make second request to get first page including total results number. (Use this number to see how many times to fetch the page)
+ *    3) Iterate x number of times and store page data to DB.
+ */
 
 const getViewDataFromHtml = (htmlDocument: string):string => {
   const regex = /<input[^>]+id="__VIEWSTATE"[^>]+value="([^"]+)"/i;
@@ -116,16 +127,13 @@ const insertIntoDatabase = (permitArray: RowObject[]) => {
   
 });
 }
+const  getIntialRequest = async (): Promise<string> => {
 
-export async function WebScrape () {
-  const db = new Database("permits.sqlite", { create: true });
-
-  console.time("formData");
-  
-  let url = 'https://secure.lni.wa.gov/epispub/frmPermitSearchMain.aspx';
-  let data = {
+  let initialData = formData(0);
+  // get current View State and EventValidation strings
+    let data = {
       method: "POST",
-      body: formData(),
+      body: initialData,
       verbose: false,
       headers: {
         "Content-Length": 13994,
@@ -133,62 +141,82 @@ export async function WebScrape () {
         "Connection": "keep-alive"
       },
   };
-  console.timeEnd("formData");
   
-  console.time("FetchCall");
-  let bodyString = formData(10);
+  // @ts-expect-error Type issue with Headers in Fetch
+  const req = await fetch(url, data);
+  
+  const res = (await req.text()) as any;
+  
+  
+  return res;
+}
+const db = new Database("permits.sqlite", { create: true });
+
+
+let firstResult:string = await getIntialRequest();
+const resultsPerPage = 20;
+let numberOfRecordsIndex = firstResult.indexOf('Permits - '); 
+let numberOfRecords = parseInt(firstResult.slice(numberOfRecordsIndex+ 10, numberOfRecordsIndex + 14));
+const numberOfPages = Math.ceil(numberOfRecords / resultsPerPage);
+
+let newFormData:viewData = {
+  viewState: getViewDataFromHtml(firstResult),
+  eventState: getEventValidationFromHtml(firstResult)
+}
+
+
+let pageNumber = 0;
+let data = {
+  method: "POST",
+  body: '',
+  verbose: false,
+  headers: {
+    "Content-Length": 13994,
+    "Content-Type": 'application/x-www-form-urlencoded',
+    "Connection": "keep-alive"
+  },
+};
+
+// WEB SCRAPEALL PAGES
+console.time("WebScrape");
+for(let x = 0; x < numberOfPages; x++) {
+
+  let bodyString = formData(pageNumber,newFormData);
   data.body = bodyString;
-  
-  const response = await fetch(url, data);
-  console.timeEnd("FetchCall");
-  
-  const result = (await response.text()) as any;
-  
-  const resultsPerPage = 20;
-  let numberOfRecordsIndex = result.indexOf('Permits - ');
-  let numberOfRecords = parseInt(result.slice(numberOfRecordsIndex+ 10, numberOfRecordsIndex + 14));
-  const numberOfPages = Math.ceil(numberOfRecords / resultsPerPage);
-  
-  let newViewData = getViewDataFromHtml(result);
-  let newEventData = getEventValidationFromHtml(result);
-  
-  let pageNumber = 0;
-  
-  
-  console.time("WebScrape");
-  for(let x = 0; x < numberOfPages; x++) {
+
     if (x === 11 ) {
       pageNumber = 2;
     }
     if (x > 11 && pageNumber === 12) {
       pageNumber = 2;
     }
-    let bodyString = formData(pageNumber,newViewData,newEventData);
-    data.body = bodyString;
+    
     
     try {
       const response = await fetch(url, data);
       const result = (await response.text()) as any;
-  
-      newViewData = getViewDataFromHtml(result);
-      newEventData = getEventValidationFromHtml(result);
+
+      newFormData = {
+        viewState: getViewDataFromHtml(result),
+        eventState: getEventValidationFromHtml(result)
+      }
       
       let permits = createListFromTable(getTableFromHtml(result));
-  
+
       console.log(`Succsefully scraped page ${x}/${numberOfPages}. Found ${permits.length} on page.`);
       insertIntoDatabase(permits);
     } catch (error) {
       console.error(`Error scraping page ${x}:`, error);
       console.error(`Waiting 30sec and trying again`);
       await new Promise(resolve => setTimeout(resolve, 30000));
-  
+
       x -= 1;
       // Handle the error gracefully
       // Continue with the loop or take appropriate action
     }
-  
+
     pageNumber++;
-  }
-  console.timeEnd("WebScrape");
-  
 }
+console.timeEnd("WebScrape");
+
+
