@@ -38,6 +38,7 @@ const server = Bun.serve({
     };
 
     if (url.pathname === "/runScrape") {
+      console.log('Running Scrape', new Date());
       scrapeAllCounties().then(()=>{
         database = getDB();
       });
