@@ -5,99 +5,114 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22> ☀ </text></svg>">
 	<title>Solar Search</title>
-    <style>
-		@-webkit-keyframes moving-gradient {
-			0% { background-position: -250px 0; }
-			100% { background-position: 250px 0; }
-		}
-		.loading {
-			background: rgb(7,173,112);
-background: linear-gradient(315deg, rgba(7,173,112,1) 18%, rgba(5,176,113,0.6896008403361344) 49%, rgba(7,173,112,1) 83%);
-
-			background-size: 500px 100px;
-          animation-name: moving-gradient;
-          animation-duration: 1s;
-          animation-iteration-count: infinite;
-          animation-timing-function: linear;
-          animation-fill-mode: forwards;
-		}
-		body {
-			margin: 0 !important;
-			background-color: #06be7b3a;
-		}
-		.greyed {
-			background-color: #05b07158;
-		}
-		.title {
-			text-align: center;
-			color: white;
-			font-size: 50px;
-			font-family: 'Russo One', sans-serifs;
-		}
-		.search-container {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			position: relative;	
-			background: rgb(250,167,10);
-background: linear-gradient(337deg, rgba(250,167,10,1) 0%, rgba(228,255,112,1) 80%);
-			height: 14em;
-		}
-		input[type=text] {
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			background-color: #ebe86c;
-			height: 3em;
-			width: 300px;
-			box-sizing: border-box;
-			border: 2px solid white;
-			border-radius: 4px;
-			font-size: 25px;
-			background-image: url('https://icons8.com/icon/6703/lightning-bolt');
-			background-position: 10px 10px; 
-			background-repeat: no-repeat;
-			padding: 12px 20px 12px 40px;
-			transition: width 0.4s ease-in-out;
-			color: black;
-		}
-
-		input[type=text]:focus {
-		width: 100%;
-		}
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-			max-width: 100vw;
-        }
-		tr:hover {background-color: #ebe86c;}
-		tr {
-			height: 40px;
-		}
-        th {
-			padding-top: 12px;
-			padding-bottom: 12px;
-			background-color: #04AA6D;
-			color: white;
-        }
-		th tr {
-			border: 1px solid #ddd;
-			text-align: left;
-		}
-		tr {
-			background-color: #06be7b3a
-		}
-		td {
-			padding: 10px;;
-		}
-    </style>
 </head>
+<style>
+	@-webkit-keyframes moving-gradient {
+		0% { background-position: -250px 0; }
+		100% { background-position: 250px 0; }
+	}
+	#counties {
+		  /* Frame */
+		display: inline-block;
+		padding: 20px 28px;
+		border-radius: 50px;
+		box-sizing: border-box;
+		
+		/* Style */
+		border: 4px solid #06be7b3a;
+		background: white;
+		color: rgb(7,173,112);
+		font-weight: bold;
+		font-size: 18px;
+		cursor: pointer;
+	}
+	.loading {
+		background: rgb(7,173,112);
+		background: linear-gradient(315deg, rgba(7,173,112,1) 18%, rgba(5,176,113,0.6896008403361344) 49%, rgba(7,173,112,1) 83%);
+
+		background-size: 500px 100px;
+		animation-name: moving-gradient;
+		animation-duration: 1s;
+		animation-iteration-count: infinite;
+		animation-timing-function: linear;
+		animation-fill-mode: forwards;
+	}
+	body {
+		margin: 0 !important;
+		background-color: #06be7b3a;
+	}
+	.greyed {
+		background-color: #05b07158;
+	}
+	.title {
+		text-align: center;
+		color: white;
+		font-size: 50px;
+		font-family: 'Russo One', sans-serifs;
+	}
+	.search-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		position: relative;	
+		background: rgb(250,167,10);
+		background: linear-gradient(337deg, rgba(250,167,10,1) 0%, rgba(228,255,112,1) 80%);
+		height: 14em;
+	}
+	input[type=text] {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		background-color: #ebe86c;
+		height: 3em;
+		width: 300px;
+		box-sizing: border-box;
+		border: 2px solid white;
+		border-radius: 4px;
+		font-size: 25px;
+		background-image: url('https://icons8.com/icon/6703/lightning-bolt');
+		background-position: 10px 10px; 
+		background-repeat: no-repeat;
+		padding: 12px 20px 12px 40px;
+		transition: width 0.4s ease-in-out;
+		color: black;
+	}
+
+	input[type=text]:focus {
+	width: 100%;
+	}
+
+	table {
+		border-collapse: collapse;
+		width: 100%;
+		max-width: 100vw;
+	}
+	tr:hover {background-color: #ebe86c;}
+	tr {
+		height: 40px;
+	}
+	th {
+		padding-top: 12px;
+		padding-bottom: 12px;
+		background-color: #04AA6D;
+		color: white;
+	}
+	th tr {
+		border: 1px solid #ddd;
+		text-align: left;
+	}
+	tr {
+		background-color: #06be7b3a
+	}
+	td {
+		padding: 10px;;
+	}
+</style>
 <body>
 	<div class="search-container">
-		<span class="title"> SOLAR SEARCH</span>
-		<input type="text" id="search-box" placeholder="Search Here Daddio">
 		<select id="counties">
 			<option value="1">ADAMS</option>
 			<option value="2">ASOTIN</option>
@@ -140,6 +155,9 @@ background: linear-gradient(337deg, rgba(250,167,10,1) 0%, rgba(228,255,112,1) 8
 			<option value="37">WHATCOM</option>
 			<option value="38">WHITMAN</option>
 		</select>
+		<span class="title"> SOLAR SEARCH</span>
+		<input type="text" id="search-box" placeholder="Search Here Daddio">
+		
 	</div>
 	
     <table id="object-table">
