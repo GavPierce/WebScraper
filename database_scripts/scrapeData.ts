@@ -60,6 +60,7 @@ const getTableFromHtml = (htmlDocument: string): string => {
 }
 
 const createListFromTable = (tableString: string) => {
+  console.log('Getting Permits from this string:', tableString);
   const htmlString: string = tableString;
 
   const headers: string[] = [
