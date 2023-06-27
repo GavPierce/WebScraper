@@ -11,7 +11,7 @@ const Counties = [
 ];
 let database = getDB();
 
-const job = schedule.scheduleJob('0 1 * * *',  async () =>{
+const job = schedule.scheduleJob('0 7 * * *',  async () =>{
   console.log('Running Daily Scrape', new Date());
   await scrapeAllCounties();
   database = getDB();
@@ -20,7 +20,7 @@ const port = parseInt(process.env.PORT || "8080");
 
 const server = Bun.serve({
   port: port,
-  fetch(req,res) {
+  async fetch(req,res) {
     const url = new URL(req.url);
     if (url.pathname === "/") {
       console.log("New Connection From:", req.headers.get('sec-ch-ua'),new Date())  
@@ -35,6 +35,11 @@ const server = Bun.serve({
       console.log(query, county);
       let filteredResult = fuzzySearch(query, database[Counties[parseInt(county)]]);
       return new Response(JSON.stringify(filteredResult));
+    };
+
+    if (url.pathname === "/runScrape") {
+      await scrapeAllCounties();
+      database = getDB();
     };
     return new Response(`404!`); 
    },
