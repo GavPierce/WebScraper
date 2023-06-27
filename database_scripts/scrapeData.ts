@@ -223,7 +223,10 @@ export const scrapeAllCounties = async () => {
             eventState: getEventValidationFromHtml(result)
           }
           
-          let permits = createListFromTable(getTableFromHtml(result));
+          console.log('Getting Permits...');
+          let table = getTableFromHtml(result);
+          console.log('Table Found. Getting Permits')
+          let permits = createListFromTable(table);
          // console.log(pageNumber, '\x1b[36m%s\x1b[0m', permits[0].Owner);  //cyan
           //console.log(`Succsefully scraped page ${i}/${numberOfPages} of ${Counties[x]}. Found ${permits.length} on page.`);
 
