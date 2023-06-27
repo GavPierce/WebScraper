@@ -123,6 +123,8 @@ const insertIntoDatabase = (permitArray: RowObject[], county: number): number =>
   // Insert each object into the table
 
   let newPermits = 0;
+  
+  console.log('DATABASE OPERATIONS');
   permitArray.forEach(obj => {
     const columns = Object.keys(obj).join(',');
     const values = Object.values(obj).map(value => `'${value}'`).join(',');
@@ -137,6 +139,7 @@ const insertIntoDatabase = (permitArray: RowObject[], county: number): number =>
   
 });
 
+  console.log('DB Updated');
   return newPermits;
 }
 const  getIntialRequest = async (county: number): Promise<string> => {
@@ -223,6 +226,8 @@ export const scrapeAllCounties = async () => {
           let permits = createListFromTable(getTableFromHtml(result));
          // console.log(pageNumber, '\x1b[36m%s\x1b[0m', permits[0].Owner);  //cyan
           //console.log(`Succsefully scraped page ${i}/${numberOfPages} of ${Counties[x]}. Found ${permits.length} on page.`);
+
+          console.log('Inserting into DB');
           newPermitsAdded += insertIntoDatabase(permits, x);
         } catch (error) {
           console.error(`Error scraping page ${i}:`, error);
