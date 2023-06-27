@@ -59,7 +59,6 @@ const getTableFromHtml = (htmlDocument: string): string => {
 }
 
 const createListFromTable = (tableString: string) => {
-  console.log('Getting Permits from this string:', tableString);
   const htmlString: string = tableString;
 
   const headers: string[] = [
@@ -122,7 +121,6 @@ const insertIntoDatabase = (permitArray: RowObject[], county: number, db: any): 
 
   let newPermits = 0;
   
-  console.log('DATABASE OPERATIONS');
   permitArray.forEach(obj => {
     const columns = Object.keys(obj).join(',');
     const values = Object.values(obj).map(value => `'${value}'`).join(',');
@@ -137,7 +135,6 @@ const insertIntoDatabase = (permitArray: RowObject[], county: number, db: any): 
   
 });
 
-  console.log('DB Updated');
   return newPermits;
 }
 const  getIntialRequest = async (county: number): Promise<string> => {
@@ -210,26 +207,21 @@ export const scrapeAllCounties = async (db:any) => {
         
         
         try {
-          console.log('Making Fetch Request');
 
             // @ts-expect-error Type issue with Headers in Fetch
           const response = await fetch(url, data);
           const result = (await response.text()) as any;
-          console.log('Response Received;')
           newFormData = {
             viewState: getViewDataFromHtml(result),
             eventState: getEventValidationFromHtml(result)
           }
           
-          console.log('Getting Permits...');
           let table = getTableFromHtml(result);
-          console.log('Table Found. Getting Permits')
           let permits = createListFromTable(table);
          // console.log(pageNumber, '\x1b[36m%s\x1b[0m', permits[0].Owner);  //cyan
           //console.log(`Succsefully scraped page ${i}/${numberOfPages} of ${Counties[x]}. Found ${permits.length} on page.`);
 
-          console.log('Inserting into DB');
-          newPermitsAdded += insertIntoDatabase(permits, x,db);
+          newPermitsAdded += insertIntoDatabase(permits, x, db);
         } catch (error) {
           console.error(`Error scraping page ${i}:`, error);
           console.error(`Waiting 30sec and trying again`);

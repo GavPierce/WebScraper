@@ -2,6 +2,9 @@
 import { getDB } from "./database_scripts/getAllFromDB";
 import { fuzzySearch } from "./Utils/fuzzySearch";
 import { scrapeAllCounties } from "./database_scripts/scrapeData";
+import { Database } from "bun:sqlite";
+let db: Database = Database.open("permits.sqlite");
+
 const schedule = require('node-schedule');
 const Counties = [
   "FIRST", "ADAMS", "ASOTIN", "BENTON_COUNTY", "CHELAN", "CLALLAM", "CLARK", "COLUMBIA", "COWLITZ", "DOUGLAS", "FERRY",
@@ -9,12 +12,12 @@ const Counties = [
   "LEWIS", "LINCOLN", "MASON", "OKANOGAN", "PACIFIC", "PEND_OREILLE", "PIERCE", "SAN_JUAN",
   "SKAGIT", "SKAMANIA", "SNOHOMISH", "SPOKANE", "STEVENS", "THURSTON", "WAHKIAKUM", "WALLA_WALLA", "WHATCOM", "WHITMAN"
 ];
-let database = getDB();
+let database = getDB(db);
 
 const job = schedule.scheduleJob('0 7 * * *',  async () =>{
   console.log('Running Daily Scrape', new Date());
-  await scrapeAllCounties();
-  database = getDB();
+  await scrapeAllCounties(db);
+  database = getDB(db);
 });
 const port = parseInt(process.env.PORT || "8080");
 
@@ -23,7 +26,7 @@ const server = Bun.serve({
   fetch(req,res) {
     const url = new URL(req.url);
     if (url.pathname === "/") {
-      console.log("New Connection From:", req.headers.get('sec-ch-ua'),new Date())  
+      console.log("New Connection From:", req.headers.get('sec-ch-ua'), new Date())  
       return new Response(Bun.file('index.html'))
     };
     
@@ -39,8 +42,8 @@ const server = Bun.serve({
 
     if (url.pathname === "/runScrape") {
       console.log('Running Scrape', new Date());
-      scrapeAllCounties().then(()=>{
-        database = getDB();
+      scrapeAllCounties(db).then(()=>{
+        database = getDB(db);
       });
       return new Response(Bun.file('index.html'));
     };
