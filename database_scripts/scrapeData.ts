@@ -59,6 +59,7 @@ const getTableFromHtml = (htmlDocument: string): string => {
 }
 
 const createListFromTable = (tableString: string) => {
+  console.log('Getting Table');
   const htmlString: string = tableString;
 
   const headers: string[] = [
@@ -103,6 +104,7 @@ const createListFromTable = (tableString: string) => {
 
 
 const insertIntoDatabase = (permitArray: RowObject[], county: number, db: any): number => {
+  console.log('Inserting into DB');
   db.run(`
   CREATE TABLE IF NOT EXISTS ${Counties[county]} (
     Id TEXT PRIMARY KEY,
