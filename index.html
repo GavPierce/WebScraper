@@ -98,6 +98,48 @@ background: linear-gradient(337deg, rgba(250,167,10,1) 0%, rgba(228,255,112,1) 8
 	<div class="search-container">
 		<span class="title"> SOLAR SEARCH</span>
 		<input type="text" id="search-box" placeholder="Search Here Daddio">
+		<select id="counties">
+			<option value="1">ADAMS</option>
+			<option value="2">ASOTIN</option>
+			<option value="3">BENTON COUNTY</option>
+			<option value="4">CHELAN</option>
+			<option value="5">CLALLAM</option>
+			<option value="6">CLARK</option>
+			<option value="7">COLUMBIA</option>
+			<option value="8">COWLITZ</option>
+			<option value="9">DOUGLAS</option>
+			<option value="10">FERRY</option>
+			<option value="11">FRANKLIN</option>
+			<option value="12">GARFIELD</option>
+			<option value="13">GRANT</option>
+			<option value="14">GRAYS HARBOR</option>
+			<option value="15">ISLAND</option>
+			<option value="16">JEFFERSON</option>
+			<option value="17">KING</option>
+			<option value="18">KITSAP</option>
+			<option value="19">KITTITAS</option>
+			<option value="20">KLICKITAT</option>
+			<option value="21">LEWIS</option>
+			<option value="22">LINCOLN</option>
+			<option value="23">MASON</option>
+			<option value="24">OKANOGAN</option>
+			<option value="52">OUT OF COUNTRY</option>
+			<option value="51">OUT OF STATE</option>
+			<option value="25">PACIFIC</option>
+			<option value="26">PEND OREILLE</option>
+			<option value="27">PIERCE</option>
+			<option value="28">SAN JUAN</option>
+			<option value="29">SKAGIT</option>
+			<option value="30">SKAMANIA</option>
+			<option value="31">SNOHOMISH</option>
+			<option value="32">SPOKANE</option>
+			<option value="33">STEVENS</option>
+			<option value="34">THURSTON</option>
+			<option value="35">WAHKIAKUM</option>
+			<option value="36">WALLA WALLA</option>
+			<option value="37">WHATCOM</option>
+			<option value="38">WHITMAN</option>
+		</select>
 	</div>
 	
     <table id="object-table">
@@ -123,13 +165,18 @@ background: linear-gradient(337deg, rgba(250,167,10,1) 0%, rgba(228,255,112,1) 8
     <script>
         const searchBox = document.getElementById('search-box');
 		const resultDiv = document.getElementById('result');
+		var selectElement = document.getElementById("counties");
+		
+		searchBox.addEventListener('keydown', fetchResults);
+		selectElement.addEventListener('change', fetchResults);
 
-		searchBox.addEventListener('input', fetchResults);
 
 		function fetchResults() {
 			const searchTerm = searchBox.value;
+			var selectedCounty = selectElement.value;
+
 			displayLoader();
-			fetch(`search?${searchTerm}`)
+			fetch(`search?searchTerm=${searchTerm}&county=${selectedCounty}`)
 				.then(response => response.json())
 				.then(data => {
 					displayResults(data);

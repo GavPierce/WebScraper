@@ -1,7 +1,12 @@
 import { formData } from "../viewState";
 import { Database } from "bun:sqlite";
 import { viewData } from "./types";
-
+const Counties = [
+  "Counties", "ADAMS", "ASOTIN", "BENTON_COUNTY", "CHELAN", "CLALLAM", "CLARK", "COLUMBIA", "COWLITZ", "DOUGLAS", "FERRY",
+  "FRANKLIN", "GARFIELD", "GRANT", "GRAYS_HARBOR", "ISLAND", "JEFFERSON", "KING", "KITSAP", "KITTITAS", "KLICKITAT",
+  "LEWIS", "LINCOLN", "MASON", "OKANOGAN", "PACIFIC", "PEND_OREILLE", "PIERCE", "SAN_JUAN",
+  "SKAGIT", "SKAMANIA", "SNOHOMISH", "SPOKANE", "STEVENS", "THURSTON", "WAHKIAKUM", "WALLA_WALLA", "WHATCOM", "WHITMAN"
+];
 const url: string = 'https://secure.lni.wa.gov/epispub/frmPermitSearchMain.aspx';
 interface RowObject {
   [key: string]: string;
@@ -98,9 +103,11 @@ const createListFromTable = (tableString: string) => {
 }
 
 
-const insertIntoDatabase = (permitArray: RowObject[]) => {
+const insertIntoDatabase = (permitArray: RowObject[], county: number): number => {
+  const db = new Database("permits.sqlite", { create: true });
+
   db.run(`
-  CREATE TABLE IF NOT EXISTS Permits (
+  CREATE TABLE IF NOT EXISTS ${Counties[county]} (
     Id TEXT PRIMARY KEY,
     AppliedDate TEXT,
     RequestedDate TEXT,
@@ -114,22 +121,27 @@ const insertIntoDatabase = (permitArray: RowObject[]) => {
   )`
 );
   // Insert each object into the table
+
+  let newPermits = 0;
   permitArray.forEach(obj => {
     const columns = Object.keys(obj).join(',');
     const values = Object.values(obj).map(value => `'${value}'`).join(',');
 
-    const selectSql = db.query(`SELECT 1 FROM Permits WHERE Id = '${obj.Id}'`);
+    const selectSql = db.query(`SELECT 1 FROM ${Counties[county]} WHERE Id = '${obj.Id}'`);
     
     if (!selectSql.get()) {
-      const insertSql = `INSERT INTO Permits (${columns}) VALUES (${values})`;
+      const insertSql = `INSERT INTO ${Counties[county]} (${columns}) VALUES (${values})`;
       db.run(insertSql);
+      newPermits++;
     }
   
 });
-}
-const  getIntialRequest = async (): Promise<string> => {
 
-  let initialData = formData(0);
+  return newPermits;
+}
+const  getIntialRequest = async (county: number): Promise<string> => {
+
+  let initialData = formData(0,undefined,county);
   // get current View State and EventValidation strings
     let data = {
       method: "POST",
@@ -150,74 +162,80 @@ const  getIntialRequest = async (): Promise<string> => {
   
   return res;
 }
-const db = new Database("permits.sqlite", { create: true });
 
+export const scrapeAllCounties = async () => {
+  console.time("WebScrape");
 
-let firstResult:string = await getIntialRequest();
-const resultsPerPage = 20;
-let numberOfRecordsIndex = firstResult.indexOf('Permits - '); 
-let numberOfRecords = parseInt(firstResult.slice(numberOfRecordsIndex+ 10, numberOfRecordsIndex + 14));
-const numberOfPages = Math.ceil(numberOfRecords / resultsPerPage);
-
-let newFormData:viewData = {
-  viewState: getViewDataFromHtml(firstResult),
-  eventState: getEventValidationFromHtml(firstResult)
+  for (let x = 1; x < Counties.length; x++ ){
+    let firstResult:string = await getIntialRequest(x);
+    const resultsPerPage = 20;
+    let numberOfRecordsIndex = firstResult.indexOf('Permits - '); 
+    let numberOfRecords = parseInt(firstResult.slice(numberOfRecordsIndex+ 10, numberOfRecordsIndex + 14));
+    const numberOfPages = Math.ceil(numberOfRecords / resultsPerPage);
+  
+    let newFormData:viewData = {
+      viewState: getViewDataFromHtml(firstResult),
+      eventState: getEventValidationFromHtml(firstResult)
+    }
+  
+    console.log(`${Counties[x]}s Permits in last year:`,  numberOfRecords);
+    let pageNumber = 0;
+    let data = {
+      method: "POST",
+      body: '',
+      verbose: false,
+      headers: {
+        "Content-Length": 13994,
+        "Content-Type": 'application/x-www-form-urlencoded',
+        "Connection": "keep-alive"
+      },
+    };
+  
+  
+    let newPermitsAdded = 0;
+  
+    // WEB SCRAPE ALL THE PAGES
+    for(let i = 0; i < numberOfPages; i++) {
+  
+      let bodyString = formData(pageNumber, newFormData, x);
+      data.body = bodyString;
+  
+        if (i === 11 ) {
+          pageNumber = 2;
+        }
+        if (i > 11 && pageNumber === 12) {
+          pageNumber = 2;
+        }
+        
+        
+        try {
+            // @ts-expect-error Type issue with Headers in Fetch
+          const response = await fetch(url, data);
+          const result = (await response.text()) as any;
+  
+          newFormData = {
+            viewState: getViewDataFromHtml(result),
+            eventState: getEventValidationFromHtml(result)
+          }
+          
+          let permits = createListFromTable(getTableFromHtml(result));
+         // console.log(pageNumber, '\x1b[36m%s\x1b[0m', permits[0].Owner);  //cyan
+          //console.log(`Succsefully scraped page ${i}/${numberOfPages} of ${Counties[x]}. Found ${permits.length} on page.`);
+          newPermitsAdded += insertIntoDatabase(permits, x);
+        } catch (error) {
+          console.error(`Error scraping page ${i}:`, error);
+          console.error(`Waiting 30sec and trying again`);
+          await new Promise(resolve => setTimeout(resolve, 30000));
+  
+          i -= 1;
+          // Handle the error gracefully
+          // Continue with the loop or take appropriate action
+        }
+  
+        pageNumber++;
+    }
+    console.log(`Finished ${Counties[x]}. ${newPermitsAdded} new Permits added.`);
+  }
+  console.log(`Finished WebScrape! Have a nice day.`);
+  console.timeEnd("WebScrape");
 }
-
-
-let pageNumber = 0;
-let data = {
-  method: "POST",
-  body: '',
-  verbose: false,
-  headers: {
-    "Content-Length": 13994,
-    "Content-Type": 'application/x-www-form-urlencoded',
-    "Connection": "keep-alive"
-  },
-};
-
-// WEB SCRAPEALL PAGES
-console.time("WebScrape");
-for(let x = 0; x < numberOfPages; x++) {
-
-  let bodyString = formData(pageNumber,newFormData);
-  data.body = bodyString;
-
-    if (x === 11 ) {
-      pageNumber = 2;
-    }
-    if (x > 11 && pageNumber === 12) {
-      pageNumber = 2;
-    }
-    
-    
-    try {
-        // @ts-expect-error Type issue with Headers in Fetch
-      const response = await fetch(url, data);
-      const result = (await response.text()) as any;
-
-      newFormData = {
-        viewState: getViewDataFromHtml(result),
-        eventState: getEventValidationFromHtml(result)
-      }
-      
-      let permits = createListFromTable(getTableFromHtml(result));
-
-      console.log(`Succsefully scraped page ${x}/${numberOfPages}. Found ${permits.length} on page.`);
-      insertIntoDatabase(permits);
-    } catch (error) {
-      console.error(`Error scraping page ${x}:`, error);
-      console.error(`Waiting 30sec and trying again`);
-      await new Promise(resolve => setTimeout(resolve, 30000));
-
-      x -= 1;
-      // Handle the error gracefully
-      // Continue with the loop or take appropriate action
-    }
-
-    pageNumber++;
-}
-console.timeEnd("WebScrape");
-
-

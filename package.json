@@ -12,6 +12,7 @@
   "dependencies": {
     "figlet": "^1.6.0",
     "fuse.js": "^6.6.2",
-    "node-cron": "^3.0.2"
+    "node-cron": "^3.0.2",
+    "node-schedule": "^2.1.1"
   }
 }
