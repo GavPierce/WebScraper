@@ -209,10 +209,12 @@ export const scrapeAllCounties = async () => {
         
         
         try {
+          console.log('Making Fetch Request');
+
             // @ts-expect-error Type issue with Headers in Fetch
           const response = await fetch(url, data);
           const result = (await response.text()) as any;
-  
+          console.log('Response Received;')
           newFormData = {
             viewState: getViewDataFromHtml(result),
             eventState: getEventValidationFromHtml(result)
