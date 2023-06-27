@@ -1,5 +1,4 @@
 import { formData } from "../viewState";
-import { Database } from "bun:sqlite";
 import { viewData } from "./types";
 const Counties = [
   "Counties", "ADAMS", "ASOTIN", "BENTON_COUNTY", "CHELAN", "CLALLAM", "CLARK", "COLUMBIA", "COWLITZ", "DOUGLAS", "FERRY",
@@ -104,9 +103,7 @@ const createListFromTable = (tableString: string) => {
 }
 
 
-const insertIntoDatabase = (permitArray: RowObject[], county: number): number => {
-  const db = new Database("permits.sqlite", { create: true });
-
+const insertIntoDatabase = (permitArray: RowObject[], county: number, db: any): number => {
   db.run(`
   CREATE TABLE IF NOT EXISTS ${Counties[county]} (
     Id TEXT PRIMARY KEY,
@@ -167,7 +164,7 @@ const  getIntialRequest = async (county: number): Promise<string> => {
   return res;
 }
 
-export const scrapeAllCounties = async () => {
+export const scrapeAllCounties = async (db:any) => {
   console.time("WebScrape");
 
   for (let x = 1; x < Counties.length; x++ ){
@@ -232,7 +229,7 @@ export const scrapeAllCounties = async () => {
           //console.log(`Succsefully scraped page ${i}/${numberOfPages} of ${Counties[x]}. Found ${permits.length} on page.`);
 
           console.log('Inserting into DB');
-          newPermitsAdded += insertIntoDatabase(permits, x);
+          newPermitsAdded += insertIntoDatabase(permits, x,db);
         } catch (error) {
           console.error(`Error scraping page ${i}:`, error);
           console.error(`Waiting 30sec and trying again`);
