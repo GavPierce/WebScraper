@@ -20,7 +20,7 @@ const port = parseInt(process.env.PORT || "8080");
 
 const server = Bun.serve({
   port: port,
-  async fetch(req,res) {
+  fetch(req,res) {
     const url = new URL(req.url);
     if (url.pathname === "/") {
       console.log("New Connection From:", req.headers.get('sec-ch-ua'),new Date())  
@@ -38,8 +38,10 @@ const server = Bun.serve({
     };
 
     if (url.pathname === "/runScrape") {
-      await scrapeAllCounties();
-      database = getDB();
+      scrapeAllCounties().then(()=>{
+        database = getDB();
+      });
+      return new Response(Bun.file('index.html'));
     };
     return new Response(`404!`); 
    },
