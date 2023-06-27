@@ -35,7 +35,7 @@ const server = Bun.serve({
       const query = params.get("searchTerm");
       const county:string = params.get("county") as string;
       
-      console.log(query, county);
+      console.log(query, county, database[Counties[parseInt(county)]].length);
       let filteredResult = fuzzySearch(query, database[Counties[parseInt(county)]]);
       return new Response(JSON.stringify(filteredResult));
     };
