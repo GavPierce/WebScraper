@@ -8,10 +8,10 @@
   },
   "devDependencies": {
     "@types/figlet": "^1.5.6",
-    "bun-types": "^0.5.0",
-    "prisma": "^4.16.1"
+    "bun-types": "^0.5.0"
   },
   "dependencies": {
+    "prisma": "^4.16.1",
     "@prisma/client": "^4.16.1",
     "figlet": "^1.6.0",
     "fuse.js": "^6.6.2",
