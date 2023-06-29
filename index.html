@@ -185,7 +185,13 @@
 		const resultDiv = document.getElementById('result');
 		var selectElement = document.getElementById("counties");
 		
-		searchBox.addEventListener('keydown', fetchResults);
+		searchBox.addEventListener('change', fetchResults);
+		searchBox.addEventListener('keydown', (event)=>{
+			if (event.keyCode === 13) {
+				fetchResults();
+			}
+		});
+
 		selectElement.addEventListener('change', fetchResults);
 
 
