@@ -17,7 +17,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -31,7 +31,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -45,7 +45,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -59,7 +59,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -73,7 +73,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -87,7 +87,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -101,7 +101,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -115,7 +115,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -129,7 +129,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -143,7 +143,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -157,7 +157,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -171,7 +171,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -185,7 +185,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -199,7 +199,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -213,7 +213,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -227,7 +227,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -241,7 +241,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -255,7 +255,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -269,7 +269,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -283,7 +283,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -297,7 +297,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -311,7 +311,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -325,7 +325,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -339,7 +339,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -353,7 +353,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -367,7 +367,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -381,7 +381,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -395,7 +395,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -409,7 +409,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -423,7 +423,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -437,7 +437,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -451,7 +451,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -465,7 +465,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -479,7 +479,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -493,7 +493,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -507,7 +507,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -521,7 +521,7 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }
   
 
@@ -535,5 +535,5 @@ datasource db {
     city         String
     county       String
     status       String
-    description  String
+    description  String @db.LongText
   }

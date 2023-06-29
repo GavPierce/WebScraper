@@ -79,7 +79,7 @@ for (let i = 0; i < Counties.length; i++) {
 
   
     // Log the result array
-    console.log('Database retrieved.', countieData);
+    console.log('Database retrieved.');
 
     return countieData;
 }
