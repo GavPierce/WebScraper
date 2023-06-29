@@ -1,6 +1,8 @@
 import { formData } from "../viewState";
 import { viewData } from "./types";
-const { PrismaClient } = require("@prisma/client");
+import { PrismaClient } from "@prisma/client";
+
+
 
 let prisma = new PrismaClient();
 

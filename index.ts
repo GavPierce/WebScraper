@@ -1,12 +1,25 @@
 
-import { getDB } from "./database_scripts/getAllFromDB";
+import { getDB } from "./database_scripts/getAllFromDB.js";
 import { fuzzySearch } from "./Utils/fuzzySearch";
 import { scrapeAllCounties } from "./database_scripts/scrapeData";
-const { PrismaClient } = require("@prisma/client");
+import Fastify from 'fastify'
+import fs from 'fs';
+
+import path from 'path';
+const fastify = Fastify({
+  logger: true
+})
+
+import { PrismaClient } from "@prisma/client";
+
+
 
 let prisma = new PrismaClient();
+let database = await getDB(prisma);
 
-const schedule = require('node-schedule');
+const port = parseInt(process.env.PORT || "8080");
+
+import schedule from 'node-schedule';
 const Counties = [
   "FIRST", "ADAMS", "ASOTIN", "BENTON_COUNTY", "CHELAN", "CLALLAM", "CLARK", "COLUMBIA", "COWLITZ", "DOUGLAS", "FERRY",
   "FRANKLIN", "GARFIELD", "GRANT", "GRAYS_HARBOR", "ISLAND", "JEFFERSON", "KING", "KITSAP", "KITTITAS", "KLICKITAT",
@@ -14,44 +27,47 @@ const Counties = [
   "SKAGIT", "SKAMANIA", "SNOHOMISH", "SPOKANE", "STEVENS", "THURSTON", "WAHKIAKUM", "WALLA_WALLA", "WHATCOM", "WHITMAN"
 ];
 
-
-let database = await getDB(prisma);
-
 const job = schedule.scheduleJob('0 7 * * *',  async () =>{
   console.log('Running Daily Scrape', new Date());
   await scrapeAllCounties();
   database = await getDB(prisma);
 });
-const port = parseInt(process.env.PORT || "8080");
 
-const server = Bun.serve({
-  port: port,
-  fetch(req,res) {
-    const url = new URL(req.url);
-    if (url.pathname === "/") {
-      console.log("New Connection From:", req.headers.get('sec-ch-ua'), new Date())  
-      return new Response(Bun.file('index.html'))
-    };
-    
-    if (url.pathname.includes("/search")) {    
-      const params = new URLSearchParams(url.search);
-      const query = params.get("searchTerm");
-      const county:string = params.get("county") as string;
-      
-      console.log(query, county, database[Counties[parseInt(county)]].length);
-      let filteredResult = fuzzySearch(query, database[Counties[parseInt(county)]]);
-      return new Response(JSON.stringify(filteredResult));
-    };
+// WEB SERVER
 
-    if (url.pathname === "/runScrape") {
-      console.log('Running Scrape', new Date());
-      scrapeAllCounties().then(async ()=>{
-        database = await getDB(prisma);
-      });
-      return new Response(Bun.file('index.html'));
-    };
-    return new Response(`404!`); 
-   },
+fastify.get('/', async (request, reply) => {
+  console.log("New Connection From:", request.headers['sec-ch-ua'], new Date());
+  const filePath = 'index.html';
+  const fileContent = await fs.promises.readFile(filePath, 'utf-8');
+  reply.type('text/html').send(fileContent);
 });
 
-console.log('Running on port 8080', new Date());
+fastify.get('/search', async (request: any, reply) => {
+  const query = request.query.searchTerm;
+  const county = request.query.county;
+  
+  console.log(query, county, database[Counties[parseInt(county)]].length);
+  let filteredResult = fuzzySearch(query, database[Counties[parseInt(county)]]);
+  reply.send(filteredResult);
+});
+
+fastify.get('/runScrape', async (request, reply) => {
+  console.log('Running Scrape', new Date());
+  await scrapeAllCounties();
+  database = await getDB(prisma);
+  const filePath = 'index.html';
+  const fileContent = await fs.promises.readFile(filePath, 'utf-8');
+  reply.type('text/html').send(fileContent);
+});
+
+fastify.setNotFoundHandler((request, reply) => {
+  reply.code(404).send('404!');
+});
+
+fastify.listen(port, (err) => {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  }
+  console.log(`Server is running on port ${port}`);
+});
