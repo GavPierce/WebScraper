@@ -7,7 +7,7 @@ import fs from 'fs';
 
 import path from 'path';
 const fastify = Fastify({
-  logger: true
+  logger: false
 })
 
 import { PrismaClient } from "@prisma/client";
@@ -46,8 +46,9 @@ fastify.get('/search', async (request: any, reply) => {
   const query = request.query.searchTerm;
   const county = request.query.county;
   
-  console.log(query, county, database[Counties[parseInt(county)]].length);
   let filteredResult = fuzzySearch(query, database[Counties[parseInt(county)]]);
+  console.log(query, Counties[parseInt(county)], filteredResult.length, '/', database[Counties[parseInt(county)]].length);
+
   reply.send(filteredResult);
 });
 
