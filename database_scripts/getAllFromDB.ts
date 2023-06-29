@@ -1,9 +1,5 @@
 
-import { Database } from "bun:sqlite";
-
-
-export const getDB = function () {
-  const db = new Database("permits.sqlite", { create: true });
+export const getDB = async function (prisma: any) {
   const Counties = [
     "ADAMS", "ASOTIN", "BENTON_COUNTY", "CHELAN", "CLALLAM", "CLARK", "COLUMBIA", "COWLITZ", "DOUGLAS", "FERRY",
     "FRANKLIN", "GARFIELD", "GRANT", "GRAYS_HARBOR", "ISLAND", "JEFFERSON", "KING", "KITSAP", "KITTITAS", "KLICKITAT",
@@ -56,23 +52,24 @@ export const getDB = function () {
 for (let i = 0; i < Counties.length; i++) {
   // Define the table name  
   // Retrieve all columns from the table
-  const query = db.query(`SELECT * from ${Counties[i]}`);
+
+  let tableName = Counties[i];
   
-  const rows = query.all();
-    // Iterate over the rows and create objects for each column
+  const rows = await prisma[tableName].findMany();
+  // Iterate over the rows and create objects for each column
     rows.forEach((row:any) => {
         
         const column = {
-            Id: row.Id,
-            AppliedDate: row.AppliedDate,
-            RequestedDate: row.RequestedDate,
-            InspectedDate: row.InspectedDate,
-            Owner: row.Owner,
-            Address: row.Address,
-            City: row.City,
-            County: row.County,
-            Status: row.Status,
-            Description: row.Description,
+            id: row.id,
+            appliedDate: row.appliedDate,
+            requestedDate: row.requestedDate,
+            inspectedDate: row.inspectedDate,
+            owner: row.owner,
+            address: row.address,
+            city: row.city,
+            county: row.county,
+            status: row.status,
+            description: row.description,
         };
     
         // Add the column object to the result array
@@ -82,9 +79,7 @@ for (let i = 0; i < Counties.length; i++) {
 
   
     // Log the result array
-    console.log('Database retrieved.');
-    // Close the database connection
-    db.close();
+    console.log('Database retrieved.', countieData);
 
     return countieData;
 }

@@ -1,5 +1,9 @@
 import { formData } from "../viewState";
 import { viewData } from "./types";
+const { PrismaClient } = require("@prisma/client");
+
+let prisma = new PrismaClient();
+
 const Counties = [
   "Counties", "ADAMS", "ASOTIN", "BENTON_COUNTY", "CHELAN", "CLALLAM", "CLARK", "COLUMBIA", "COWLITZ", "DOUGLAS", "FERRY",
   "FRANKLIN", "GARFIELD", "GRANT", "GRAYS_HARBOR", "ISLAND", "JEFFERSON", "KING", "KITSAP", "KITTITAS", "KLICKITAT",
@@ -59,7 +63,6 @@ const getTableFromHtml = (htmlDocument: string): string => {
 }
 
 const createListFromTable = (tableString: string) => {
-  console.log('Getting Table');
   const htmlString: string = tableString;
 
   const headers: string[] = [
@@ -89,6 +92,9 @@ const createListFromTable = (tableString: string) => {
     if (tdMatches) {
       for (let i = 0; i < tdMatches.length; i++) {
         const tdContent: string = tdMatches[i].replace(/<\/?td\b[^>]*>/gi, '');
+        //Camel Case it
+        headers[i] = headers[i].replace(headers[i][0],headers[i][0].toLowerCase());
+        
         rowObject[headers[i]] = tdContent.trim();
       }
     }
@@ -103,40 +109,37 @@ const createListFromTable = (tableString: string) => {
 }
 
 
-const insertIntoDatabase = (permitArray: RowObject[], county: number, db: any): number => {
-  console.log('Inserting into DB');
-  db.run(`
-  CREATE TABLE IF NOT EXISTS ${Counties[county]} (
-    Id TEXT PRIMARY KEY,
-    AppliedDate TEXT,
-    RequestedDate TEXT,
-    InspectedDate TEXT,
-    Owner TEXT,
-    Address TEXT,
-    City TEXT,
-    County TEXT,
-    Status TEXT,
-    Description TEXT
-  )`
-);
-  // Insert each object into the table
-
+const insertIntoDatabase = async (permitArray: RowObject[], county: number): Promise<number> => {
   let newPermits = 0;
   
-  permitArray.forEach(obj => {
-    const columns = Object.keys(obj).join(',');
-    const values = Object.values(obj).map(value => `'${value}'`).join(',');
+//   permitArray.forEach(obj => {
+//     const columns = Object.keys(obj).join(',');
+//     const values = Object.values(obj).map(value => `'${value}'`).join(',');
 
-    const selectSql = db.query(`SELECT 1 FROM ${Counties[county]} WHERE Id = '${obj.Id}'`);
+//     const selectSql = db.query(`SELECT 1 FROM ${Counties[county]} WHERE Id = '${obj.Id}'`);
     
-    if (!selectSql.get()) {
-      const insertSql = `INSERT INTO ${Counties[county]} (${columns}) VALUES (${values})`;
-      db.run(insertSql);
-      newPermits++;
-    }
+//     if (!selectSql.get()) {
+//       const insertSql = `INSERT INTO ${Counties[county]} (${columns}) VALUES (${values})`;
+//       db.run(insertSql);
+//       newPermits++;
+//     }
   
-});
+// });
+for (const obj of permitArray) {
 
+  const permitExists = await prisma[Counties[county]].findFirst({
+    where: {
+      id: obj.id
+    }
+  });
+
+  if (!permitExists) {
+    await prisma[Counties[county]].create({
+      data: obj
+    });
+    newPermits++;
+  }
+}
   return newPermits;
 }
 const  getIntialRequest = async (county: number): Promise<string> => {
@@ -163,7 +166,7 @@ const  getIntialRequest = async (county: number): Promise<string> => {
   return res;
 }
 
-export const scrapeAllCounties = async (db:any) => {
+export const scrapeAllCounties = async () => {
   console.time("WebScrape");
 
   for (let x = 1; x < Counties.length; x++ ){
@@ -223,7 +226,7 @@ export const scrapeAllCounties = async (db:any) => {
          // console.log(pageNumber, '\x1b[36m%s\x1b[0m', permits[0].Owner);  //cyan
           //console.log(`Succsefully scraped page ${i}/${numberOfPages} of ${Counties[x]}. Found ${permits.length} on page.`);
 
-          newPermitsAdded += insertIntoDatabase(permits, x, db);
+          newPermitsAdded += await insertIntoDatabase(permits, x);
         } catch (error) {
           console.error(`Error scraping page ${i}:`, error);
           console.error(`Waiting 30sec and trying again`);

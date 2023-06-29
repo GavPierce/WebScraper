@@ -2,8 +2,9 @@
 import { getDB } from "./database_scripts/getAllFromDB";
 import { fuzzySearch } from "./Utils/fuzzySearch";
 import { scrapeAllCounties } from "./database_scripts/scrapeData";
-import { Database } from "bun:sqlite";
-let db: Database = Database.open("permits.sqlite");
+const { PrismaClient } = require("@prisma/client");
+
+let prisma = new PrismaClient();
 
 const schedule = require('node-schedule');
 const Counties = [
@@ -12,12 +13,14 @@ const Counties = [
   "LEWIS", "LINCOLN", "MASON", "OKANOGAN", "PACIFIC", "PEND_OREILLE", "PIERCE", "SAN_JUAN",
   "SKAGIT", "SKAMANIA", "SNOHOMISH", "SPOKANE", "STEVENS", "THURSTON", "WAHKIAKUM", "WALLA_WALLA", "WHATCOM", "WHITMAN"
 ];
-let database = getDB(db);
+
+
+let database = await getDB(prisma);
 
 const job = schedule.scheduleJob('0 7 * * *',  async () =>{
   console.log('Running Daily Scrape', new Date());
-  await scrapeAllCounties(db);
-  database = getDB(db);
+  await scrapeAllCounties();
+  database = await getDB(prisma);
 });
 const port = parseInt(process.env.PORT || "8080");
 
@@ -42,8 +45,8 @@ const server = Bun.serve({
 
     if (url.pathname === "/runScrape") {
       console.log('Running Scrape', new Date());
-      scrapeAllCounties(db).then(()=>{
-        database = getDB(db);
+      scrapeAllCounties().then(async ()=>{
+        database = await getDB(prisma);
       });
       return new Response(Bun.file('index.html'));
     };

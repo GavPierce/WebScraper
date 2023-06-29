@@ -232,43 +232,43 @@
 					row.classList.add('greyed');
 				}
 				const idCell = document.createElement('td');
-				idCell.textContent = item.item.Id;
+				idCell.textContent = item.item.id;
 				row.appendChild(idCell);
 
 				const appliedDateCell = document.createElement('td');
-				appliedDateCell.textContent = item.item.AppliedDate;
+				appliedDateCell.textContent = item.item.appliedDate;
 				row.appendChild(appliedDateCell);
 
 				const requestedDateCell = document.createElement('td');
-				requestedDateCell.textContent = item.item.RequestedDate;
+				requestedDateCell.textContent = item.item.requestedDate;
 				row.appendChild(requestedDateCell);
 
 				const inspectedDateCell = document.createElement('td');
-				inspectedDateCell.textContent = item.item.InspectedDate;
+				inspectedDateCell.textContent = item.item.inspectedDate;
 				row.appendChild(inspectedDateCell);
 
 				const ownerCell = document.createElement('td');
-				ownerCell.textContent = item.item.Owner;
+				ownerCell.textContent = item.item.owner;
 				row.appendChild(ownerCell);
 
 				const addressCell = document.createElement('td');
-				addressCell.textContent = item.item.Address;
+				addressCell.textContent = item.item.address;
 				row.appendChild(addressCell);
 
 				const cityCell = document.createElement('td');
-				cityCell.textContent = item.item.City;
+				cityCell.textContent = item.item.city;
 				row.appendChild(cityCell);
 
 				const countyCell = document.createElement('td');
-				countyCell.textContent = item.item.County;
+				countyCell.textContent = item.item.county;
 				row.appendChild(countyCell);
 
 				const statusCell = document.createElement('td');
-				statusCell.textContent = item.item.Status;
+				statusCell.textContent = item.item.status;
 				row.appendChild(statusCell);
 
 				const descriptionCell = document.createElement('td');
-				descriptionCell.textContent = item.item.Description;
+				descriptionCell.textContent = item.item.description;
 				row.appendChild(descriptionCell);
 				tableBody.appendChild(row);
 			});

@@ -1,0 +1,539 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+  model ADAMS {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model ASOTIN {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model BENTON_COUNTY {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model CHELAN {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model CLALLAM {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model CLARK {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model COLUMBIA {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model COWLITZ {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model DOUGLAS {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model FERRY {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model FRANKLIN {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model GARFIELD {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model GRANT {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model GRAYS_HARBOR {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model ISLAND {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model JEFFERSON {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model KING {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model KITSAP {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model KITTITAS {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model KLICKITAT {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model LEWIS {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model LINCOLN {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model MASON {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model OKANOGAN {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model PACIFIC {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model PEND_OREILLE {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model PIERCE {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model SAN_JUAN {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model SKAGIT {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model SKAMANIA {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model SNOHOMISH {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model SPOKANE {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model STEVENS {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model THURSTON {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model WAHKIAKUM {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model WALLA_WALLA {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model WHATCOM {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
+  
+
+  model WHITMAN {
+    id           String  @id
+    appliedDate  String
+    requestedDate String
+    inspectedDate String
+    owner        String
+    address      String
+    city         String
+    county       String
+    status       String
+    description  String
+  }
