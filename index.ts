@@ -64,7 +64,7 @@ fastify.setNotFoundHandler((request, reply) => {
   reply.code(404).send('404!');
 });
 
-fastify.listen(port, (err) => {
+fastify.listen(port,'0.0.0.0', (err) => {
   if (err) {
     console.error(err);
     process.exit(1);
