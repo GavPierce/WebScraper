@@ -26,7 +26,10 @@ interface RowObject {
  *    2) Make second request to get first page including total results number. (Use this number to see how many times to fetch the page)
  *    3) Iterate x number of times and store page data to DB.
  */
-
+const waitSecondsAndContinue = async (seconds: number) => {
+  console.error(`Waiting ${seconds}sec and trying again`);
+  await new Promise(resolve => setTimeout(resolve, seconds * 1000));
+}
 const getViewDataFromHtml = (htmlDocument: string):string => {
   const regex = /<input[^>]+id="__VIEWSTATE"[^>]+value="([^"]+)"/i;
   const match = htmlDocument.match(regex);
@@ -114,38 +117,26 @@ const createListFromTable = (tableString: string) => {
 
 const insertIntoDatabase = async (permitArray: RowObject[], county: number): Promise<number> => {
   let newPermits = 0;
-  
-//   permitArray.forEach(obj => {
-//     const columns = Object.keys(obj).join(',');
-//     const values = Object.values(obj).map(value => `'${value}'`).join(',');
+  for (const obj of permitArray) {
 
-//     const selectSql = db.query(`SELECT 1 FROM ${Counties[county]} WHERE Id = '${obj.Id}'`);
-    
-//     if (!selectSql.get()) {
-//       const insertSql = `INSERT INTO ${Counties[county]} (${columns}) VALUES (${values})`;
-//       db.run(insertSql);
-//       newPermits++;
-//     }
-  
-// });
-for (const obj of permitArray) {
-
-  const permitExists = await prisma[Counties[county]].findFirst({
-    where: {
-      id: obj.id
-    }
-  });
-
-  if (!permitExists) {
-    await prisma[Counties[county]].create({
-      data: obj
+    const permitExists = await prisma[Counties[county]].findFirst({
+      where: {
+        id: obj.id
+      }
     });
-    newPermits++;
+    if (permitExists) {
+      return newPermits;
+    }
+    if (!permitExists) {
+      await prisma[Counties[county]].create({
+        data: obj
+      });
+      newPermits++;
+    }
   }
-}
   return newPermits;
 }
-const  getIntialRequest = async (county: number): Promise<string> => {
+const  getIntialRequest = async (county: number): Promise<string| null> => {
 
   let initialData = formData(0,undefined,county);
   // get current View State and EventValidation strings
@@ -159,21 +150,41 @@ const  getIntialRequest = async (county: number): Promise<string> => {
         "Connection": "keep-alive"
       },
   };
+  try {
+      // @ts-expect-error Type issue with Headers in Fetch
+
+    const req = await fetch(url, data);
+    
+    const res = (await req.text()) as any;
   
-  // @ts-expect-error Type issue with Headers in Fetch
-  const req = await fetch(url, data);
   
-  const res = (await req.text()) as any;
+    return res;
   
   
-  return res;
+  }catch (error){
+    return null;
+  }
 }
 
 export const scrapeAllCounties = async () => {
   console.time("WebScrape");
-
+  let totalNewPermits = 0;
+  let fetchTrys = 0;
   for (let x = 1; x < Counties.length; x++ ){
-    let firstResult:string = await getIntialRequest(x);
+
+    let firstResult: string|null = await getIntialRequest(x);
+    if (firstResult == null) {
+      fetchTrys++;
+      console.log(`Error getting permits for ${Counties[x]}. Trying again. ${fetchTrys}/5`)
+      await waitSecondsAndContinue(30);
+      if (fetchTrys == 5) {
+        fetchTrys = 0;
+        break;
+      }
+      x -= 1;
+      continue;
+    }
+
     const resultsPerPage = 20;
     let numberOfRecordsIndex = firstResult.indexOf('Permits - '); 
     let numberOfRecords = parseInt(firstResult.slice(numberOfRecordsIndex+ 10, numberOfRecordsIndex + 14));
@@ -216,7 +227,7 @@ export const scrapeAllCounties = async () => {
         
         try {
 
-            // @ts-expect-error Type issue with Headers in Fetch
+          // @ts-expect-error Type issue with Headers in Fetch
           const response = await fetch(url, data);
           const result = (await response.text()) as any;
           newFormData = {
@@ -226,24 +237,23 @@ export const scrapeAllCounties = async () => {
           
           let table = getTableFromHtml(result);
           let permits = createListFromTable(table);
-         // console.log(pageNumber, '\x1b[36m%s\x1b[0m', permits[0].Owner);  //cyan
-          //console.log(`Succsefully scraped page ${i}/${numberOfPages} of ${Counties[x]}. Found ${permits.length} on page.`);
 
           newPermitsAdded += await insertIntoDatabase(permits, x);
+          if (newPermitsAdded == 0) {
+            break;
+          }
         } catch (error) {
-          console.error(`Error scraping page ${i}:`, error);
-          console.error(`Waiting 30sec and trying again`);
-          await new Promise(resolve => setTimeout(resolve, 30000));
+          await waitSecondsAndContinue(30);
   
           i -= 1;
-          // Handle the error gracefully
-          // Continue with the loop or take appropriate action
+          continue;
         }
-  
+        
         pageNumber++;
     }
+    totalNewPermits += newPermitsAdded;
     console.log(`Finished ${Counties[x]}. ${newPermitsAdded} new Permits added.`);
   }
-  console.log(`Finished WebScrape! Have a nice day.`);
+  console.log(`Finished WebScrape! ${totalNewPermits} new permits added. Have a nice day.`);
   console.timeEnd("WebScrape");
 }
